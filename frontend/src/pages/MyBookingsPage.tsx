@@ -1,9 +1,8 @@
-// frontend/src/pages/MyBookingsPage.tsx
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useBookings } from '../context/BookingContext';
-import { Link } from 'react-router-dom';
+import { Link }          from 'react-router-dom';
 
-export default function MyBookingsPage() {
+const MyBookingsPage: React.FC = () => {
   const { bookings, fetchBookings, cancelBooking } = useBookings();
 
   useEffect(() => {
@@ -20,12 +19,10 @@ export default function MyBookingsPage() {
           {bookings.map(b => (
             <li key={b._id} style={{ marginBottom: 12 }}>
               <Link to={`/events/${b.event._id}`}>
-                {b.event.title} on {new Date(b.event.date).toLocaleDateString()}
+                {b.event.title} on{' '}
+                {new Date(b.event.date).toLocaleDateString()}
               </Link>
-              <button
-                onClick={() => cancelBooking(b._id)}
-                style={{ marginLeft: 8 }}
-              >
+              <button onClick={() => cancelBooking(b._id)} style={{ marginLeft: 8 }}>
                 Cancel
               </button>
             </li>
@@ -34,4 +31,6 @@ export default function MyBookingsPage() {
       )}
     </div>
   );
-}
+};
+
+export default MyBookingsPage;

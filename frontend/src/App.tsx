@@ -17,6 +17,7 @@ import EventDetailPage from './pages/EventDetailPage';
 import EditEventPage from './pages/EditEventPage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
+import MyBookingsPage from './pages/MyBookingsPage';
 // import MyBookingsPage from './pages/MyBookingsPage'; // later
 
 function App() {
@@ -109,14 +110,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
 
-          <Route
-            path="/events/new"
-            element={
-              <ProtectedRoute>
-                <CreateEventPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/events/new" element={<ProtectedRoute><CreateEventPage /></ProtectedRoute>}/>
 
           {/* -- Step 4.3: Detail & Edit routes -- */}
           <Route path="/events/:id" element={<EventDetailPage />} />

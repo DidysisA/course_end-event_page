@@ -6,6 +6,7 @@ import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { EventProvider } from './context/EventContext';
 import { FilterProvider } from './context/FilterContext';
+import { BookingProvider } from './context/BookingContext';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
