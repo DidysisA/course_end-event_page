@@ -16,6 +16,7 @@ app.get('/', (_, res) => res.send('It works from the backend!'));
 
 // Mount your API routes
 app.use('/api', apiRoutes);
+app.use('/api/bookings', require('./routes/bookings'));
 
 const PORT = process.env.PORT || 5000;
 connectDB().then(() => {

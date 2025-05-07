@@ -1,7 +1,9 @@
 const { Schema, model, Types } = require('mongoose');
+
 const BookingSchema = new Schema({
-  user:  { type: Types.ObjectId, ref: 'User' },
-  event: { type: Types.ObjectId, ref: 'Event' },
-  seats: Number,
+  user:  { type: Types.ObjectId, ref: 'User', required: true },
+  event: { type: Types.ObjectId, ref: 'Event', required: true },
+  seats: { type: Number, default: 1 },
 }, { timestamps: true });
+
 module.exports = model('Booking', BookingSchema);

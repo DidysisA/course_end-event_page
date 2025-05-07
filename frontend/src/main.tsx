@@ -12,7 +12,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <AuthProvider>
       <EventProvider>
         <FilterProvider>
-          <App />
+          <BookingProvider>
+            <App />
+          </BookingProvider>
         </FilterProvider>
       </EventProvider>
     </AuthProvider>
