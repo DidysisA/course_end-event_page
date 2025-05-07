@@ -1,12 +1,22 @@
 const Booking = require('../models/Booking');
 
-// POST /api/bookings
 exports.create = async (req, res) => {
   const { event, seats } = req.body;
   const user = req.userId;
+
+  // 1) Prevent duplicates
+  const existing = await Booking.findOne({ user, event });
+  if (existing) {
+    return res
+      .status(400)
+      .json({ message: 'You have already booked this event.' });
+  }
+
+  // 2) Otherwise create
   const booking = await Booking.create({ user, event, seats });
   res.status(201).json(booking);
 };
+
 
 // GET /api/bookings  (current user’s bookings)
 exports.listMy = async (req, res) => {

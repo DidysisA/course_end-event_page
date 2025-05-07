@@ -6,4 +6,6 @@ const BookingSchema = new Schema({
   seats: { type: Number, default: 1 },
 }, { timestamps: true });
 
+BookingSchema.index({ user: 1, event: 1 }, { unique: true });
+
 module.exports = model('Booking', BookingSchema);

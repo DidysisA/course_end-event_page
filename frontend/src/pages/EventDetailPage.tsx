@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+// frontend/src/pages/EventDetailPage.tsx
+import React, { useEffect, useState, useContext } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import api from '../api/api';
-import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { useBookings } from '../context/BookingContext';
 
 export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [event, setEvent] = useState<any>(null);
   const auth = useContext(AuthContext);
-  const nav  = useNavigate();
+  const navigate = useNavigate();
+  const { createBooking } = useBookings();
 
   useEffect(() => {
     api.get(`/events/${id}`).then(res => setEvent(res.data));
@@ -19,9 +21,22 @@ export default function EventDetailPage() {
   const isOwner = auth?.user?._id === event.organizer._id;
 
   const handleDelete = async () => {
-    if (!confirm('Delete this event?')) return;
+    if (!window.confirm('Delete this event?')) return;
     await api.delete(`/events/${id}`);
-    nav('/');
+    navigate('/');
+  };
+
+  const handleBook = async () => {
+    try {
+      await createBooking(event._id);
+      navigate('/bookings');
+    } catch (error: any) {
+      // Display the message sent by your backend (e.g. “already booked”)
+      const msg =
+        error.response?.data?.message ||
+        'Booking failed. Please try again.';
+      alert(msg);
+    }
   };
 
   return (
@@ -31,11 +46,13 @@ export default function EventDetailPage() {
       <p>{event.description}</p>
       <p>Organized by: {event.organizer.name}</p>
 
-      {isOwner && (
+      {isOwner ? (
         <>
           <Link to={`/events/${id}/edit`}>Edit</Link>{' '}
           <button onClick={handleDelete}>Delete</button>
         </>
+      ) : (
+        <button onClick={handleBook}>Book this Event</button>
       )}
     </div>
   );
