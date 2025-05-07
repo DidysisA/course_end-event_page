@@ -1,35 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { type JSX } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { useContext } from 'react';
+import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
+import EventListPage from './pages/EventListPage';
+import CreateEventPage from './pages/CreateEventPage';
+import EventDetailPage from './pages/EventDetailPage';
+import EditEventPage from './pages/EditEventPage';
+import { AuthContext } from './context/AuthContext';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const auth = useContext(AuthContext);
+
+  const ProtectedRoute = ({ children }: { children: JSX.Element }) =>
+    auth?.token ? children : <Navigate to="/login" replace />;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      <nav style={{ padding: '1rem', borderBottom: '1px solid #ccc' }}>
+        <Link to="/" style={{ marginRight: '1rem' }}>
+          Home
+        </Link>
+        {auth?.token ? (
+          <>
+            <span style={{ marginRight: '1rem' }}>Hi, {auth.user?.name}</span>
+            <button onClick={auth.logout} style={{ marginRight: '1rem' }}>
+              Logout
+            </button>
+            <Link to="/events/new" style={{ marginRight: '1rem' }}>
+              New Event
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link to="/login" style={{ marginRight: '1rem' }}>
+              Login
+            </Link>
+            <Link to="/register">Register</Link>
+          </>
+        )}
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<EventListPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/events/new"
+          element={
+            <ProtectedRoute>
+              <CreateEventPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/events/:id" element={<EventDetailPage />} />
+        <Route
+          path="/events/:id/edit"
+          element={
+            <ProtectedRoute>
+              <EditEventPage />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

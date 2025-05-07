@@ -32,3 +32,9 @@ exports.changePassword = async (req, res) => {
   await user.save();
   res.json({ message: 'Password updated' });
 };
+
+// GET /api/auth/me
+exports.me = async (req, res) => {
+  const user = await User.findById(req.userId).select('-password');
+  res.json(user);
+};

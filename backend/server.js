@@ -1,11 +1,13 @@
-// backend/server.js
-
-require('dotenv').config();              // 1. Load .env before anything else
-const express   = require('express');    // 2. Import Express once
+require('dotenv').config();            
+const express   = require('express');
+const cors      = require('cors'); 
 const connectDB = require('./config/db');
 const apiRoutes = require('./routes/api');
 
 const app = express();
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
 app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 
