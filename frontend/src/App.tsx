@@ -5,114 +5,108 @@ import {
   Route,
   Navigate,
   Link as RouterLink,
-  useNavigate,
 } from 'react-router-dom';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  Container,
+} from '@mui/material';
 import { useContext } from 'react';
-import { AppBar, Toolbar, Button, Typography, Box } from '@mui/material';
 
-import { AuthContext } from './context/AuthContext';
-import EventListPage from './pages/EventListPage';
-import CreateEventPage from './pages/CreateEventPage';
-import EventDetailPage from './pages/EventDetailPage';
-import EditEventPage from './pages/EditEventPage';
-import RegisterPage from './pages/RegisterPage';
-import LoginPage from './pages/LoginPage';
-import MyBookingsPage from './pages/MyBookingsPage';
-// import MyBookingsPage from './pages/MyBookingsPage'; // later
+import { AuthContext }   from './context/AuthContext';
+import EventListPage     from './pages/EventListPage';
+import EventDetailPage   from './pages/EventDetailPage';
+import CreateEventPage   from './pages/CreateEventPage';
+import EditEventPage     from './pages/EditEventPage';
+import MyBookingsPage    from './pages/MyBookingsPage';
+import RegisterPage      from './pages/RegisterPage';
+import LoginPage         from './pages/LoginPage';
 
 function App() {
   const auth = useContext(AuthContext);
-  const nav = useNavigate();
 
   const ProtectedRoute = ({ children }: { children: JSX.Element }) =>
     auth?.token ? children : <Navigate to="/login" replace />;
 
   const handleLogout = () => {
     auth?.logout();
-    nav('/login');
   };
 
   return (
     <>
+      {/* 1. Full-width Navbar at the very top */}
       <AppBar position="static">
-        <Toolbar>
+        {/* 2. Brand left, links right */}
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography
             variant="h6"
             component={RouterLink}
             to="/"
-            sx={{
-              flexGrow: 1,
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
+            sx={{ color: 'inherit', textDecoration: 'none' }}
           >
             Eventify
           </Typography>
 
-          {auth?.token ? (
-            <>
-              <Typography sx={{ mr: 2 }}>
-                Hi, {auth.user?.name}
-              </Typography>
-              <Button color="inherit" onClick={handleLogout}>
-                Logout
-              </Button>
-              <Button
-                color="inherit"
-                component={RouterLink}
-                to="/events/new"
-                sx={{ ml: 1 }}
-              >
-                New Event
-              </Button>
-              {/* <Button
-                color="inherit"
-                component={RouterLink}
-                to="/bookings"
-                sx={{ ml: 1 }}
-              >
-                My Bookings
-              </Button> */}
-            </>
-          ) : (
-            <>
-              <Button
-                color="inherit"
-                component={RouterLink}
-                to="/login"
-              >
-                Login
-              </Button>
-              <Button
-                color="inherit"
-                component={RouterLink}
-                to="/register"
-                sx={{ ml: 1 }}
-              >
-                Register
-              </Button>
-            </>
-          )}
-          <Button
-            color="inherit"
-            component={RouterLink}
-            to="/bookings"
-            sx={{ ml: 1 }}
-          >
-            My Bookings
-          </Button>
+          <Box>
+            {auth?.token ? (
+              <>
+                <Typography
+                  variant="body1"
+                  component="span"
+                  sx={{ mr: 2 }}
+                >
+                  Hi, {auth.user?.name}
+                </Typography>
+                <Button color="inherit" onClick={handleLogout}>
+                  Logout
+                </Button>
+                <Button
+                  color="inherit"
+                  component={RouterLink}
+                  to="/events/new"
+                  sx={{ ml: 1 }}
+                >
+                  New Event
+                </Button>
+                <Button
+                  color="inherit"
+                  component={RouterLink}
+                  to="/bookings"
+                  sx={{ ml: 1 }}
+                >
+                  My Bookings
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  color="inherit"
+                  component={RouterLink}
+                  to="/login"
+                >
+                  Login
+                </Button>
+                <Button
+                  color="inherit"
+                  component={RouterLink}
+                  to="/register"
+                  sx={{ ml: 1 }}
+                >
+                  Register
+                </Button>
+              </>
+            )}
+          </Box>
         </Toolbar>
       </AppBar>
 
-      <Box component="main" sx={{ mt: 4, px: 2 }}>
+      {/* 3. Center all page content horizontally inside a Container */}
+      <Container component="main" maxWidth="md" sx={{ mt: 4 }}>
         <Routes>
           <Route path="/" element={<EventListPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-
-          <Route path="/events/new" element={<ProtectedRoute><CreateEventPage /></ProtectedRoute>}/>
-
-          {/* -- Step 4.3: Detail & Edit routes -- */}
           <Route path="/events/:id" element={<EventDetailPage />} />
           <Route
             path="/events/:id/edit"
@@ -123,15 +117,26 @@ function App() {
             }
           />
           <Route
+            path="/events/new"
+            element={
+              <ProtectedRoute>
+                <CreateEventPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/bookings"
             element={
               <ProtectedRoute>
                 <MyBookingsPage />
               </ProtectedRoute>
             }
-          />  
+          />
+
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login"    element={<LoginPage />} />
         </Routes>
-      </Box>
+      </Container>
     </>
   );
 }
