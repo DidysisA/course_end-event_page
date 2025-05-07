@@ -1,0 +1,55 @@
+@base_url = http://localhost:5000/api
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODFiMzI4OWEwMTRlYTMwMTAyMmQyNGEiLCJpYXQiOjE3NDY2MTI5NzUsImV4cCI6MTc0NjYxNjU3NX0.aDdMka-OhzzoY9W2aUy-EOK8qPsRkVjDwtXs2TNV798
+@event_id = 681b3332a014ea301022d24d
+### 1) Register a new user
+POST {{base_url}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Alice",
+  "email": "alice@example.com",
+  "password": "password123"
+}
+
+
+### 2) Log in and grab JWT
+POST {{base_url}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "password": "password123"
+}
+
+
+### 3) Create an event (protected)
+# Copy the token you get back from #2 into @auth_token above
+POST {{base_url}}/events
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My Test Event",
+  "description": "This proves CRUD works!",
+  "date": "2025-06-01T18:00:00.000Z"
+}
+
+
+### 4) List all events (public)
+GET {{base_url}}/events
+
+
+### 5) Update your event (protected)
+# After you create in #3, copy the returned "_id" into @event_id above
+PUT {{base_url}}/events/{{event_id}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My Edited Event Title"
+}
+
+
+### 6) Delete your event (protected)
+DELETE {{base_url}}/events/{{event_id}}
+Authorization: Bearer {{auth_token}}
