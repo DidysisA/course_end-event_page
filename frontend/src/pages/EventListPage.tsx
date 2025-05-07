@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../api/api';
+import { Link } from 'react-router-dom';
 
 interface Event {
   _id: string;
@@ -33,9 +34,14 @@ export default function EventListPage() {
         <ul>
           {events.map(ev => (
             <li key={ev._id} style={{ marginBottom: 12 }}>
-              <strong>{ev.title}</strong> —{' '}
-              {new Date(ev.date).toLocaleDateString()}
-              <p>{ev.description}</p>
+              <Link
+                to={`/events/${ev._id}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <strong>{ev.title}</strong> —{' '}
+                {new Date(ev.date).toLocaleDateString()}
+                <p>{ev.description}</p>
+              </Link>
             </li>
           ))}
         </ul>
