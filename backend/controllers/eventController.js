@@ -1,4 +1,5 @@
 const Event = require('../models/Event');
+const User  = require('../models/User');
 
 exports.list  = async (_, res) => {
   const events = await Event.find().populate('venue organizer');
@@ -14,10 +15,33 @@ exports.create = async (req, res) => {
   res.status(201).json(ev);
 };
 exports.update = async (req, res) => {
-  const ev = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const ev = await Event.findById(req.params.id);
+  if (!ev) {
+    return res.status(404).json({ message: 'Event not found' });
+  }
+
+  const user = await User.findById(req.userId);
+
+  if (ev.organizer.toString() !== req.userId && !user.isAdmin) {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+
+  Object.assign(ev, req.body);
+  await ev.save();
   res.json(ev);
 };
 exports.remove = async (req, res) => {
-  await Event.findByIdAndDelete(req.params.id);
+  const ev = await Event.findById(req.params.id);
+  if (!ev) {
+    return res.status(404).json({ message: 'Event not found' });
+  }
+
+  const user = await User.findById(req.userId);
+
+  if (ev.organizer.toString() !== req.userId && !user.isAdmin) {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+
+  await ev.deleteOne();
   res.status(204).end();
 };
