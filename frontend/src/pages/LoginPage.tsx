@@ -1,20 +1,30 @@
 import React, { useState, useContext } from 'react';
 import type { FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  Link as MuiLink,
+} from '@mui/material';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
-  const [email, setEmail] = useState('');
+
+  const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string| null>(null);
+  const [error,    setError]    = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!auth) return;
+
     try {
+      if (!auth) throw new Error('No auth context');
       await auth.login(email, password);
       navigate('/');
     } catch (err: any) {
@@ -23,30 +33,51 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email</label><br/>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Password</label><br/>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" style={{ marginTop: 12 }}>Log In</button>
-      </form>
-    </div>
+    <Container maxWidth="sm" sx={{ mt: 8 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Welcome Back
+      </Typography>
+
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+      >
+        <TextField
+          label="Email"
+          type="email"
+          required
+          fullWidth
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+        />
+
+        <TextField
+          label="Password"
+          type="password"
+          required
+          fullWidth
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+        />
+
+        {error && (
+          <Typography color="error" role="alert">
+            {error}
+          </Typography>
+        )}
+
+        <Button type="submit" variant="contained" size="large">
+          Log In
+        </Button>
+      </Box>
+
+      <Typography variant="body2" sx={{ mt: 2 }}>
+        Don’t have an account?{' '}
+        <MuiLink component={RouterLink} to="/register">
+          Sign up
+        </MuiLink>
+      </Typography>
+    </Container>
   );
 }

@@ -1,62 +1,91 @@
-import React, { useState, useContext } from 'react';
+// frontend/src/pages/CreateEventPage.tsx
+import React, { useState } from 'react';
 import type { FormEvent } from 'react';
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Box
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import api from '../api/api';
-import { AuthContext } from '../context/AuthContext';
+import { useEvents } from '../context/EventContext';
 
 export default function CreateEventPage() {
   const navigate = useNavigate();
-  const auth = useContext(AuthContext);
-  const [title, setTitle] = useState('');
+  const { addEvent } = useEvents();
+
+  const [title,       setTitle]       = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState('');
+  const [date,        setDate]        = useState('');
+  const [error,       setError]       = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!auth?.token) {
-      return navigate('/login');
-    }
+    setError(null);
+
     try {
-      await api.post('/events', { title, description, date });
+      await addEvent({ title, description, date });
       navigate('/');
-    } catch (err) {
-      console.error('Error creating event', err);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Could not create event');
     }
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Create New Event</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title</label><br/>
-          <input
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Description</label><br/>
-          <textarea
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Date & Time</label><br/>
-          <input
-            type="datetime-local"
-            value={date}
-            onChange={e => setDate(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" style={{ marginTop: 12 }}>
+    <Container maxWidth="sm" sx={{ mt: 8 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        New Event
+      </Typography>
+
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+        }}
+      >
+        <TextField
+          label="Title"
+          required
+          fullWidth
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+
+        <TextField
+          label="Description"
+          required
+          fullWidth
+          multiline
+          minRows={3}
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+        />
+
+        <TextField
+          label="Date & Time"
+          type="datetime-local"
+          required
+          fullWidth
+          // strip seconds for convenience
+          InputLabelProps={{ shrink: true }}
+          value={date}
+          onChange={e => setDate(e.target.value)}
+        />
+
+        {error && (
+          <Typography color="error" role="alert">
+            {error}
+          </Typography>
+        )}
+
+        <Button type="submit" variant="contained" size="large">
           Create Event
-        </button>
-      </form>
-    </div>
+        </Button>
+      </Box>
+    </Container>
   );
 }
