@@ -7,6 +7,7 @@ const ec       = require('../controllers/eventController');
 const multer   = require('multer');
 const path     = require('path');
 const Event    = require('../models/Event');
+const fs       = require('fs');
 
 // Multer setup: store uploads into the backend/uploads/ folder
 const storage = multer.diskStorage({
@@ -52,5 +53,33 @@ router.post(
     }
   }
 );
+
+router.delete(
+    '/events/:id/images/:filename',
+    auth,
+    async (req, res) => {
+      try {
+        const { id, filename } = req.params;
+        const event = await Event.findById(id);
+        if (!event) return res.status(404).json({ message: 'Event not found' });
+  
+        // build the URL & filter it out
+        const url = `/uploads/${filename}`;
+        event.images = (event.images || []).filter(img => img !== url);
+        await event.save();
+  
+        // remove file from disk
+        const filePath = path.join(__dirname, '../uploads', filename);
+        fs.unlink(filePath, err => {
+          if (err) console.warn('Failed to delete file:', filePath, err);
+        });
+  
+        return res.json({ images: event.images });
+      } catch (err) {
+        console.error('Error deleting image:', err);
+        return res.status(500).json({ message: 'Could not delete image' });
+      }
+    }
+  );
 
 module.exports = router;
