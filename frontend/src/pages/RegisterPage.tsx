@@ -1,5 +1,4 @@
-// frontend/src/pages/RegisterPage.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
 import {
   Container,

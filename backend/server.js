@@ -11,10 +11,8 @@ app.use(cors({
 app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 
-// Health check
 app.get('/', (_, res) => res.send('It works from the backend!'));
 
-// Mount your API routes
 app.use('/api', apiRoutes);
 app.use('/api/bookings', require('./routes/bookings'));
 

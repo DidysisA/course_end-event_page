@@ -1,21 +1,19 @@
-// frontend/src/theme.ts
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
   palette: {
-    mode: 'dark',           // you already have a dark background
+    mode: 'dark',
     primary: { main: '#1976d2' },
   },
   components: {
-    // Override styles for all filled inputs:
     MuiFilledInput: {
       styleOverrides: {
         root: {
-          backgroundColor: '#fff',    // white bg
-          borderRadius: 4,            // rounded corners
+          backgroundColor: '#fff',
+          borderRadius: 4,
         },
         input: {
-          color: '#000',              // dark text
+          color: '#000',
         },
       },
     },

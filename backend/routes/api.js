@@ -1,5 +1,3 @@
-// backend/routes/api.js
-
 const express  = require('express');
 const router   = express.Router();
 const auth     = require('../middleware/auth');
@@ -9,31 +7,26 @@ const path     = require('path');
 const Event    = require('../models/Event');
 const fs       = require('fs');
 
-// Multer setup: store uploads into the backend/uploads/ folder
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename:    (req, file, cb) => {
-    // e.g. "<eventId>-<timestamp><ext>"
     const ext = path.extname(file.originalname);
     cb(null, `${req.params.id}-${Date.now()}${ext}`);
   },
 });
 const upload = multer({ storage });
 
-/** Public routes **/
-router.get('/events',     ec.list);      // list all events
-router.get('/events/:id', ec.get);       // get a single event by ID
+router.get('/events',     ec.list);
+router.get('/events/:id', ec.get);
 
-/** Protected routes (requires Bearer <token>) **/
 router.post('/events',       auth, ec.create);
 router.put('/events/:id',    auth, ec.update);
 router.delete('/events/:id', auth, ec.remove);
 
-/** Image upload **/
 router.post(
   '/events/:id/images',
-  auth,                         // only for logged-in users
-  upload.array('images', 10),   // accept up to 10 files under field name "images"
+  auth,
+  upload.array('images', 10),
   async (req, res) => {
     try {
       const event = await Event.findById(req.params.id);
@@ -41,7 +34,6 @@ router.post(
         return res.status(404).json({ message: 'Event not found' });
       }
 
-      // Build public URLs and append to the Event.images array
       const urls = req.files.map(f => `/uploads/${f.filename}`);
       event.images = (event.images || []).concat(urls);
       await event.save();
@@ -63,12 +55,10 @@ router.delete(
         const event = await Event.findById(id);
         if (!event) return res.status(404).json({ message: 'Event not found' });
   
-        // build the URL & filter it out
         const url = `/uploads/${filename}`;
         event.images = (event.images || []).filter(img => img !== url);
         await event.save();
   
-        // remove file from disk
         const filePath = path.join(__dirname, '../uploads', filename);
         fs.unlink(filePath, err => {
           if (err) console.warn('Failed to delete file:', filePath, err);

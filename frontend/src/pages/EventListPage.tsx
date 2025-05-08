@@ -1,5 +1,4 @@
-// frontend/src/pages/EventListPage.tsx
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   GridLegacy as Grid,

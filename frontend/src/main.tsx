@@ -12,7 +12,7 @@ import { BookingProvider } from './context/BookingContext';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider theme={theme}>
-      <CssBaseline />       {/* resets defaults & sets dark background */}
+      <CssBaseline />       
       <AuthProvider>
         <EventProvider>
           <FilterProvider>

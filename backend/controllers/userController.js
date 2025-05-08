@@ -2,7 +2,6 @@ const bcrypt = require('bcryptjs');
 const jwt    = require('jsonwebtoken');
 const User   = require('../models/User');
 
-// POST /api/auth/register
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
   const hashed = await bcrypt.hash(password, 10);
@@ -10,7 +9,6 @@ exports.register = async (req, res) => {
   res.status(201).json({ id: user._id, email: user.email });
 };
 
-// POST /api/auth/login
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -21,7 +19,6 @@ exports.login = async (req, res) => {
   res.json({ token });
 };
 
-// PUT /api/auth/password
 exports.changePassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
   const user = await User.findById(req.userId);
@@ -33,7 +30,6 @@ exports.changePassword = async (req, res) => {
   res.json({ message: 'Password updated' });
 };
 
-// GET /api/auth/me
 exports.me = async (req, res) => {
   const user = await User.findById(req.userId).select('-password');
   res.json(user);

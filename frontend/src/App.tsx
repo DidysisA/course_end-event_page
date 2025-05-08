@@ -1,4 +1,4 @@
-import React, { type JSX } from 'react';
+import { type JSX } from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -37,9 +37,7 @@ function App() {
 
   return (
     <>
-      {/* 1. Full-width Navbar at the very top */}
       <AppBar position="static">
-        {/* 2. Brand left, links right */}
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography
             variant="h6"
@@ -103,7 +101,6 @@ function App() {
         </Toolbar>
       </AppBar>
 
-      {/* 3. Center all page content horizontally inside a Container */}
       <Container component="main" maxWidth="md" sx={{ mt: 4 }}>
         <Routes>
           <Route path="/" element={<EventListPage />} />

@@ -1,4 +1,3 @@
-// frontend/src/pages/EditEventPage.tsx
 import React, { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import {
@@ -35,12 +34,10 @@ export default function EditEventPage() {
   const [loading, setLoading] = useState(true);
   const [error,   setError  ] = useState<string | null>(null);
 
-  // 1) Load event and its images
   useEffect(() => {
     api.get<EventData>(`/events/${id}`)
       .then(res => {
         const data = res.data;
-        // convert date for input
         const dt = new Date(data.date);
         const local = dt.toISOString().slice(0,16);
         setForm({ title: data.title, description: data.description, date: local });
@@ -50,13 +47,11 @@ export default function EditEventPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // 2) Handle text changes
   const handleChange = (field: keyof EventData) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setForm(f => ({ ...f, [field]: e.target.value }));
     };
 
-  // 3) Save text changes
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault(); setError(null);
     try {
@@ -64,7 +59,6 @@ export default function EditEventPage() {
         title:       form.title,
         description: form.description,
         date:        new Date(form.date).toISOString(),
-        // images are managed separately
       });
       navigate(`/events/${id}`);
     } catch (err: any) {
@@ -72,7 +66,6 @@ export default function EditEventPage() {
     }
   };
 
-  // 4) Delete an existing image
   const handleDeleteImage = async (url: string) => {
     const filename = url.split('/uploads/')[1];
     try {
@@ -131,7 +124,6 @@ export default function EditEventPage() {
           </Box>
         </Box>
 
-        {/* 5) Existing images preview + delete */}
         {images.length > 0 && (
           <Box sx={{ mt: 4 }}>
             <Typography variant="h6" gutterBottom>
@@ -166,7 +158,6 @@ export default function EditEventPage() {
           </Box>
         )}
 
-        {/* 6) File upload UI */}
         <Box sx={{ mt: 4 }}>
           <Typography variant="h6">Upload New Images</Typography>
           <input
@@ -181,7 +172,6 @@ export default function EditEventPage() {
                 await api.post(`/events/${id}/images`, fd, {
                   headers: { 'Content-Type': 'multipart/form-data' }
                 });
-                // refresh images
                 const updated = await api.get<EventData>(`/events/${id}`);
                 setImages(updated.data.images || []);
               } catch {

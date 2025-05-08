@@ -1,13 +1,11 @@
 import { createContext, useReducer, useContext } from 'react'
 import type { ReactNode } from 'react'
 
-// 1. State & actions
 interface FilterState {
   search: string
 }
 type FilterAction = { type: 'SET_SEARCH'; payload: string }
 
-// 2. Reducer #2
 function filterReducer(state: FilterState, action: FilterAction): FilterState {
   switch (action.type) {
     case 'SET_SEARCH':
@@ -17,7 +15,6 @@ function filterReducer(state: FilterState, action: FilterAction): FilterState {
   }
 }
 
-// 3. Context value
 interface FilterContextProps extends FilterState {
   setSearch: (s: string) => void
 }

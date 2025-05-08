@@ -1,5 +1,4 @@
-// frontend/src/pages/EventDetailPage.tsx
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import {
   Container,
   Typography,
@@ -58,7 +57,6 @@ export default function EventDetailPage() {
           {event.description}
         </Typography>
 
-        {/* 1-image preview */}
         {event.images?.[0] && (
           <Box mb={3}>
             <CardMedia
@@ -70,7 +68,6 @@ export default function EventDetailPage() {
           </Box>
         )}
 
-        {/* full gallery */}
         {event.images && event.images.length > 0 && (
           <>
             <Typography variant="h6" gutterBottom>
@@ -91,7 +88,6 @@ export default function EventDetailPage() {
           </>
         )}
 
-        {/* actions */}
         <Box sx={{ display: 'flex', gap: 2 }}>
           {isOwner ? (
             <>

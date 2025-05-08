@@ -1,5 +1,4 @@
-// frontend/src/pages/CreateEventPage.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
 import {
   Container,
@@ -8,14 +7,9 @@ import {
   Button,
   Box
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import api, { IMG_BASE } from '../api/api';
-import { useEvents } from '../context/EventContext';
+import api from '../api/api';
 
 export default function CreateEventPage() {
-  const navigate = useNavigate();
-  const { addEvent } = useEvents();
-
   const [title,       setTitle]       = useState('');
   const [description, setDescription] = useState('');
   const [date,        setDate]        = useState('');
