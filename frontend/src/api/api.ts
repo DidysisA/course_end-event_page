@@ -1,14 +1,15 @@
 import axios from 'axios';
 
+const BACKEND_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
+export const IMG_BASE = BACKEND_URL;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL as string,
+  baseURL: `${BACKEND_URL}/api`,
 });
 
-// No explicit type annotation here – TS will infer
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token && config.headers) {
-    // ensure headers object exists
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;

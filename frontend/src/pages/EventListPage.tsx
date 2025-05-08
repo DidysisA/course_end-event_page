@@ -1,15 +1,22 @@
 // frontend/src/pages/EventListPage.tsx
 import React, { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { GridLegacy as Grid, Container, Typography, Card, CardContent, CardMedia} from '@mui/material';
-import api from '../api/api';
+import {
+  GridLegacy as Grid,
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  CardMedia
+} from '@mui/material';
+import api, { IMG_BASE } from '../api/api';
 
 interface Event {
-  _id:       string;
-  title:     string;
+  _id:        string;
+  title:      string;
   description:string;
-  date:      string;
-  imageUrl?: string;   // optional preview image
+  date:       string;
+  images?:    string[];
 }
 
 export default function EventListPage() {
@@ -46,7 +53,6 @@ export default function EventListPage() {
 
       <Grid container spacing={4}>
         {events.map(ev => (
-          // 2 columns on sm+ (600px+), 1 column on xs
           <Grid item key={ev._id} xs={12} sm={6}>
             <Card
               component={RouterLink}
@@ -55,28 +61,21 @@ export default function EventListPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
-                textDecoration: 'none',      // remove link underline
-                color: 'inherit',            // preserve text color
-                '&:hover': {
-                  boxShadow: 6,              // hover effect
-                },
+                textDecoration: 'none',
+                color: 'inherit',
+                '&:hover': { boxShadow: 6 },
               }}
             >
-              {ev.imageUrl && (
+              {ev.images?.[0] && (
                 <CardMedia
                   component="img"
                   height="140"
-                  image={ev.imageUrl}
+                  image={`${IMG_BASE}${ev.images[0]}`}
                   alt={ev.title}
                 />
               )}
-
               <CardContent sx={{ flexGrow: 1 }}>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{ wordBreak: 'break-word' }}
-                >
+                <Typography variant="h6" gutterBottom sx={{ wordBreak: 'break-word' }}>
                   {ev.title}
                 </Typography>
                 <Typography
@@ -87,10 +86,7 @@ export default function EventListPage() {
                 >
                   {new Date(ev.date).toLocaleDateString()}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ wordBreak: 'break-word' }}
-                >
+                <Typography variant="body2" sx={{ wordBreak: 'break-word' }}>
                   {ev.description}
                 </Typography>
               </CardContent>

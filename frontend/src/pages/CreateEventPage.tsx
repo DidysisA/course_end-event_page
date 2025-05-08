@@ -9,6 +9,7 @@ import {
   Box
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import api, { IMG_BASE } from '../api/api';
 import { useEvents } from '../context/EventContext';
 
 export default function CreateEventPage() {
@@ -19,14 +20,19 @@ export default function CreateEventPage() {
   const [description, setDescription] = useState('');
   const [date,        setDate]        = useState('');
   const [error,       setError]       = useState<string | null>(null);
+  const [createdId,   setCreatedId]   = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
 
     try {
-      await addEvent({ title, description, date });
-      navigate('/');
+      // create new event and grab its ID
+      const res = await api.post('/events', { title, description, date });
+      const newId = res.data._id;
+      setCreatedId(newId);
+      // optionally navigate away instead:
+      // navigate(`/events/${newId}/edit`);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Could not create event');
     }
@@ -41,11 +47,7 @@ export default function CreateEventPage() {
       <Box
         component="form"
         onSubmit={handleSubmit}
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-        }}
+        sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
       >
         <TextField
           label="Title"
@@ -54,7 +56,6 @@ export default function CreateEventPage() {
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
-
         <TextField
           label="Description"
           required
@@ -64,28 +65,53 @@ export default function CreateEventPage() {
           value={description}
           onChange={e => setDescription(e.target.value)}
         />
-
         <TextField
           label="Date & Time"
           type="datetime-local"
           required
           fullWidth
-          // strip seconds for convenience
           InputLabelProps={{ shrink: true }}
           value={date}
           onChange={e => setDate(e.target.value)}
         />
-
         {error && (
           <Typography color="error" role="alert">
             {error}
           </Typography>
         )}
-
         <Button type="submit" variant="contained" size="large">
           Create Event
         </Button>
       </Box>
+
+      {/* ——— image upload UI, only functional once createdId is set ——— */}
+      {createdId && (
+        <Box sx={{ mt: 4 }}>
+          <Typography variant="h6">Upload Images</Typography>
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={async e => {
+              if (!e.target.files?.length) return;
+              const formData = new FormData();
+              Array.from(e.target.files).forEach(f =>
+                formData.append('images', f)
+              );
+              try {
+                await api.post(
+                  `/events/${createdId}/images`,
+                  formData,
+                  { headers: { 'Content-Type': 'multipart/form-data' } }
+                );
+                window.location.reload();
+              } catch {
+                alert('Upload failed');
+              }
+            }}
+          />
+        </Box>
+      )}
     </Container>
   );
 }
