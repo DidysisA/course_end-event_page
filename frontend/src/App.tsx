@@ -45,7 +45,7 @@ function App() {
             to="/"
             sx={{ color: 'inherit', textDecoration: 'none' }}
           >
-            Eventify
+            EventsPage 0.1!
           </Typography>
 
           <Box>
